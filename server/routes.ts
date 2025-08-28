@@ -8,6 +8,7 @@ import { medicalResearchService } from "./services/medical-research";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import DigitalDoctorService from './services/digital-doctor';
 
 // Configure multer for file uploads
 const upload = multer({
@@ -596,6 +597,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("WhatsApp reminder error:", error);
       res.status(500).json({ message: "Failed to send reminder" });
+    }
+  });
+
+  // Digital Doctor API
+  app.post('/api/digital-doctor/chat', async (req, res) => {
+    try {
+      const { patientId, message, language, doctorId } = req.body;
+      
+      if (!patientId || !message || !language || !doctorId) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required fields' 
+        });
+      }
+
+      const digitalDoctor = new DigitalDoctorService();
+      const response = await digitalDoctor.generateResponse({
+        patientId,
+        message,
+        language,
+        doctorId
+      });
+
+      res.json({
+        success: true,
+        response
+      });
+    } catch (error) {
+      console.error('Digital doctor error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to generate digital doctor response' 
+      });
+    }
+  });
+
+  // Voice cloning endpoint for doctors
+  app.post('/api/doctor/clone-voice', upload.single('audio'), async (req, res) => {
+    try {
+      const { doctorId, doctorName } = req.body;
+      const audioFile = req.file;
+
+      if (!audioFile || !doctorId || !doctorName) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required fields' 
+        });
+      }
+
+      const digitalDoctor = new DigitalDoctorService();
+      const voiceId = await digitalDoctor.cloneDoctorVoice(audioFile.buffer, doctorName);
+
+      // Update doctor record with voice ID
+      await storage.updateDoctorVoiceId(doctorId, voiceId);
+
+      res.json({
+        success: true,
+        voiceId,
+        message: 'Voice cloned successfully'
+      });
+    } catch (error) {
+      console.error('Voice cloning error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to clone voice' 
+      });
+    }
+  });
+
+  // Test voice clone endpoint
+  app.post('/api/digital-doctor/test-voice', async (req, res) => {
+    try {
+      const { voiceId, text, language } = req.body;
+      
+      if (!voiceId || !text || !language) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required fields' 
+        });
+      }
+
+      const digitalDoctor = new DigitalDoctorService();
+      const voiceMessage = await digitalDoctor.textToSpeech(text, voiceId, language);
+
+      res.json({
+        success: true,
+        audioUrl: voiceMessage.audioUrl,
+        duration: voiceMessage.duration
+      });
+    } catch (error) {
+      console.error('Voice test error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to test voice' 
+      });
     }
   });
 

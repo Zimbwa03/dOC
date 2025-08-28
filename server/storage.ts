@@ -99,6 +99,19 @@ export class PostgresStorage implements IStorage {
     return result[0];
   }
 
+  // Update doctor's voice ID
+  async updateDoctorVoiceId(doctorId: string, voiceId: string): Promise<void> {
+    try {
+      await db
+        .update(doctors)
+        .set({ voiceId })
+        .where(eq(doctors.id, doctorId));
+    } catch (error) {
+      console.error('Error updating doctor voice ID:', error);
+      throw new Error('Failed to update doctor voice ID');
+    }
+  }
+
   // Patient operations
   async getPatientById(id: string): Promise<Patient | undefined> {
     const result = await db.select().from(patients).where(eq(patients.id, id)).limit(1);
