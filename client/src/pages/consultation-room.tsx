@@ -100,7 +100,7 @@ export default function ConsultationRoom() {
   
   // Refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const sessionStartTimeRef = useRef<Date | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -138,7 +138,7 @@ export default function ConsultationRoom() {
 
     // Initialize Web Speech API with enhanced settings
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       
       if (recognitionRef.current) {
@@ -147,9 +147,9 @@ export default function ConsultationRoom() {
         recognitionRef.current.lang = selectedLanguage === 'sn' ? 'sn-ZW' : 'en-US';
         recognitionRef.current.maxAlternatives = 3;
 
-        recognitionRef.current.onresult = (event) => {
+        recognitionRef.current.onresult = (event: any) => {
           const results = Array.from(event.results);
-          const latestResult = results[results.length - 1];
+          const latestResult = results[results.length - 1] as any;
           
           if (latestResult.isFinal) {
             const transcriptText = latestResult[0].transcript;
@@ -173,7 +173,7 @@ export default function ConsultationRoom() {
           }
         };
 
-        recognitionRef.current.onerror = (event) => {
+        recognitionRef.current.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error);
           toast({
             title: "Speech Recognition Error",
@@ -492,7 +492,7 @@ export default function ConsultationRoom() {
 
         const response = await apiRequest("POST", "/api/consultations", consultationData);
         
-        if (response.success) {
+        if (response.ok) {
           toast({
             title: "Consultation Saved",
             description: "Consultation has been successfully saved with comprehensive reports",

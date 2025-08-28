@@ -9,6 +9,7 @@ export interface AIInsight {
   type: 'diagnostic' | 'treatment' | 'clinical_note' | 'warning';
   content: string;
   confidence: number;
+  priority: 'low' | 'medium' | 'high';
   sources?: string[];
 }
 

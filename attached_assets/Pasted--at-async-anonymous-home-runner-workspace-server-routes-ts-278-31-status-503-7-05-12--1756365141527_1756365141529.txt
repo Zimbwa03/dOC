@@ -1,0 +1,81 @@
+ at async <anonymous> (/home/runner/workspace/server/routes.ts:278:31) {
+  status: 503
+}
+7:05:12 AM [express] GET /api/doctor/journals/324432c2-8208-4ee0-b0cc-4e5edad9890d 200 in 6335ms :: …
+7:05:20 AM [express] GET /api/doctor/patients/all/324432c2-8208-4ee0-b0cc-4e5edad9890d 200 in 806ms …
+7:06:02 AM [express] POST /api/patients/register 201 in 963ms :: {"message":"Patient registered succ…
+Medical analysis error: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at throwErrorIfNotOK (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:760:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:490:9)
+    at async Models.Models.generateContent (/home/runner/workspace/node_modules/@google/genai/src/models.ts:76:14)
+    at async GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:78:24)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24) {
+  status: 503
+}
+AI analysis error: Error: Failed to analyze medical consultation: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:119:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24)
+7:08:03 AM [express] POST /api/ai/analyze-consultation 500 in 561ms :: {"message":"AI analysis faile…
+Medical analysis error: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at throwErrorIfNotOK (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:760:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:490:9)
+    at async Models.Models.generateContent (/home/runner/workspace/node_modules/@google/genai/src/models.ts:76:14)
+    at async GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:78:24)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24) {
+  status: 503
+}
+AI analysis error: Error: Failed to analyze medical consultation: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:119:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24)
+7:08:08 AM [express] POST /api/ai/analyze-consultation 500 in 11717ms :: {"message":"AI analysis fai…
+Medical analysis error: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at throwErrorIfNotOK (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:760:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:490:9)
+    at async Models.Models.generateContent (/home/runner/workspace/node_modules/@google/genai/src/models.ts:76:14)
+    at async GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:78:24)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24) {
+  status: 503
+}
+AI analysis error: Error: Failed to analyze medical consultation: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:119:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24)
+7:08:22 AM [express] POST /api/ai/analyze-consultation 500 in 10390ms :: {"message":"AI analysis fai…
+7:08:23 AM [express] POST /api/ai/generate-consultation-report 200 in 4ms
+7:08:25 AM [express] POST /api/consultations 201 in 1325ms :: {"message":"Consultation created succe…
+Medical analysis error: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at throwErrorIfNotOK (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:760:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:490:9)
+    at async Models.Models.generateContent (/home/runner/workspace/node_modules/@google/genai/src/models.ts:76:14)
+    at async GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:78:24)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24) {
+  status: 503
+}
+AI analysis error: Error: Failed to analyze medical consultation: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:119:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24)
+7:09:28 AM [express] POST /api/ai/analyze-consultation 500 in 1181ms :: {"message":"AI analysis fail…
+Medical analysis error: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at throwErrorIfNotOK (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:760:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/node_modules/@google/genai/src/_api_client.ts:490:9)
+    at async Models.Models.generateContent (/home/runner/workspace/node_modules/@google/genai/src/models.ts:76:14)
+    at async GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:78:24)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24) {
+  status: 503
+}
+AI analysis error: Error: Failed to analyze medical consultation: ApiError: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+    at GeminiService.analyzeMedicalConsultation (/home/runner/workspace/server/services/gemini.ts:119:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:363:24)
+7:09:42 AM [express] POST /api/ai/analyze-consultation 500 in 11426ms :: {"message":"AI analysis fai…
+7:09:46 AM [express] POST /api/ai/generate-consultation-report 200 in 4ms
+7:09:46 AM [express] POST /api/ai/analyze-consultation 400 in 1ms :: {"message":"Transcript or sympt…
+7:09:48 AM [express] POST /api/consultations 201 in 1332ms :: {"message":"Consultation created succe…
