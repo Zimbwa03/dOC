@@ -1,8 +1,8 @@
-import { ElevenLabs } from 'elevenlabs';
+import { ElevenLabsClient } from 'elevenlabs';
 import { storage } from '../storage';
 
 // Initialize ElevenLabs client
-const elevenLabs = new ElevenLabs({
+const elevenLabs = new ElevenLabsClient({
   apiKey: process.env.ELEVENLABS_API_KEY || '',
 });
 
@@ -46,7 +46,7 @@ export class DigitalDoctorService {
       const aiResponse = await this.generateAIResponse(medicalPrompt, request.language);
       
       // Convert to speech using doctor's cloned voice
-      const voiceMessage = await this.textToSpeech(aiResponse, doctor.voiceId || process.env.ELEVENLABS_VOICE_ID, request.language);
+      const voiceMessage = await this.textToSpeech(aiResponse, doctor.voiceId || process.env.ELEVENLABS_VOICE_ID || 'default_voice', request.language);
       
       return {
         text: aiResponse,
@@ -66,17 +66,17 @@ export class DigitalDoctorService {
   private async buildMedicalContext(patientId: string, doctorId: string): Promise<any> {
     try {
       // Get latest consultation
-      const consultations = await storage.getConsultationsByPatient(patientId, 1);
+      const consultations = await storage.getConsultationsByPatientId(patientId, 1);
       const latestConsultation = consultations[0];
       
       // Get health plan
-      const healthPlan = await storage.getPatientHealthPlan(patientId);
+      const healthPlan = await storage.getHealthPlanByPatientId(patientId);
       
       // Get medication history
       const medications = healthPlan?.medications || [];
       
       // Get AI interactions history
-      const aiInteractions = await storage.getAiInteractions(patientId, 10);
+      const aiInteractions = await storage.getAiInteractionsByPatientId(patientId);
       
       return {
         patientId,
@@ -190,7 +190,7 @@ export class DigitalDoctorService {
     try {
       const voiceSettings = this.getVoiceSettings(language);
       
-      const audioStream = await elevenLabs.textToSpeech({
+      const audioStream = await elevenLabs.textToSpeech.convert({
         text,
         voice_id: voiceId,
         model_id: this.modelId,

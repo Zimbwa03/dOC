@@ -13,6 +13,7 @@ export const doctors = pgTable("doctors", {
   practiceName: varchar("practice_name"),
   phoneNumber: varchar("phone_number"),
   voiceSampleUrl: varchar("voice_sample_url"),
+  voiceId: varchar("voice_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
