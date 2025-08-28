@@ -112,19 +112,24 @@ export default function ConsultationRoom() {
   const analyserRef = useRef<AnalyserNode | null>(null);
 
   // Fetch existing patients for the "Registered" button
-  const { data: existingPatients, refetch: refetchPatients } = useQuery({
+  const { data: existingPatients, refetch: refetchPatients, isLoading: isLoadingPatients } = useQuery({
     queryKey: ['existingPatients'],
     queryFn: async () => {
       const doctorSession = JSON.parse(localStorage.getItem("doctorSession") || "{}");
       if (!doctorSession.doctor?.id) return [];
 
       const response = await apiRequest("GET", `/api/doctor/patients/all/${doctorSession.doctor.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch patients');
+      }
       const data = await response.json();
-      return data;
+      return Array.isArray(data) ? data : [];
     },
     enabled: !!localStorage.getItem("doctorSession"),
     refetchOnMount: true,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    staleTime: 0, // Always refetch to get latest data
+    cacheTime: 0 // Don't cache the data
   });
 
   useEffect(() => {
@@ -632,9 +637,17 @@ export default function ConsultationRoom() {
           </Button>
 
           <Button
-            onClick={() => {
-              refetchPatients();
-              setIsExistingPatientDialogOpen(true);
+            onClick={async () => {
+              try {
+                await refetchPatients();
+                setIsExistingPatientDialogOpen(true);
+              } catch (error) {
+                toast({
+                  title: "Error",
+                  description: "Failed to load registered patients. Please try again.",
+                  variant: "destructive",
+                });
+              }
             }}
             variant="outline"
             className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3"
@@ -1089,12 +1102,17 @@ export default function ConsultationRoom() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {existingPatients && existingPatients.length > 0 ? (
+            {isLoadingPatients ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p>Loading registered patients...</p>
+              </div>
+            ) : existingPatients && existingPatients.length > 0 ? (
               <div className="max-h-96 overflow-y-auto space-y-2">
                 {existingPatients.map((patient: PatientSummary) => (
                   <div 
                     key={patient.id}
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => startExistingPatientConsultation(patient)}
                   >
                     <div className="flex items-center space-x-3">
@@ -1104,8 +1122,10 @@ export default function ConsultationRoom() {
                       <div>
                         <p className="font-medium text-gray-900">{patient.name}</p>
                         <p className="text-sm text-gray-500">
-                          Phone: {patient.phoneNumber} • 
-                          Last Visit: {patient.lastConsultation ? new Date(patient.lastConsultation).toLocaleDateString() : 'Never'}
+                          Phone: {patient.phoneNumber || 'Not provided'} 
+                          {patient.lastConsultation && (
+                            <span> • Last Visit: {new Date(patient.lastConsultation).toLocaleDateString()}</span>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -1118,8 +1138,18 @@ export default function ConsultationRoom() {
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <User className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                <p>No registered patients found</p>
+                <p className="text-lg">No registered patients found</p>
                 <p className="text-sm">Register a new patient to get started</p>
+                <Button 
+                  onClick={() => {
+                    setIsExistingPatientDialogOpen(false);
+                    setIsPatientDialogOpen(true);
+                  }}
+                  className="mt-4 bg-blue-600 hover:bg-blue-700"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Register New Patient
+                </Button>
               </div>
             )}
           </div>

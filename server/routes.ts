@@ -207,25 +207,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/doctor/patients/all/:doctorId", async (req, res) => {
     try {
       const { doctorId } = req.params;
+      console.log(`Fetching patients for doctor: ${doctorId}`);
+      
       const patients = await storage.getPatientsByDoctorId(doctorId);
+      console.log(`Found ${patients.length} patients`);
       
       const patientsWithConsultations = [];
       for (const patient of patients) {
         const latestConsultation = await storage.getLatestConsultationByPatientId(patient.id);
+        const allConsultations = await storage.getConsultationsByPatientId(patient.id);
+        
         patientsWithConsultations.push({
           id: patient.id,
           name: patient.fullName,
           phoneNumber: patient.phoneNumber,
           lastConsultation: latestConsultation?.consultationDate || null,
-          totalConsultations: latestConsultation ? 1 : 0, // This could be enhanced to count all consultations
+          totalConsultations: allConsultations.length,
           status: latestConsultation?.status || 'no_consultations'
         });
       }
 
+      console.log(`Returning ${patientsWithConsultations.length} patients with consultation data`);
       res.json(patientsWithConsultations);
     } catch (error) {
       console.error("All patients fetch error:", error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ 
+        message: "Internal server error",
+        error: error.message 
+      });
     }
   });
 
