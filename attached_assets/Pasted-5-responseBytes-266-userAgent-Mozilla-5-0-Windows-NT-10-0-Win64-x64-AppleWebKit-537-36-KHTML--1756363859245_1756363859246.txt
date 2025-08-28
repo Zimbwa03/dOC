@@ -1,0 +1,55 @@
+5 responseBytes=266 userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+     [POST]500prodocdot.onrender.com/api/auth/doctor/loginclientIP="143.105.37.33" requestID="0e68945a-c973-4126" responseTimeMS=884 responseBytes=310 userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+     [POST]500prodocdot.onrender.com/api/auth/doctor/loginclientIP="143.105.37.33" requestID="de39bae4-7ebc-43a9" responseTimeMS=845 responseBytes=310 userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+Doctor login error: error: column "voice_id" does not exist
+    at /opt/render/project/src/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///opt/render/project/src/node_modules/drizzle-orm/node-postgres/session.js:83:22
+    at async PostgresStorage.getDoctorByEmail (file:///opt/render/project/src/dist/index.js:121:20)
+    at async PostgresStorage.authenticateDoctor (file:///opt/render/project/src/dist/index.js:235:20)
+    at async file:///opt/render/project/src/dist/index.js:1074:22 {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '119',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3716',
+  routine: 'errorMissingColumn'
+}
+6:49:58 AM [express] POST /api/auth/doctor/login 500 in 876ms :: {"message":"Internal server error"}
+Doctor login error: error: column "voice_id" does not exist
+    at /opt/render/project/src/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///opt/render/project/src/node_modules/drizzle-orm/node-postgres/session.js:83:22
+    at async PostgresStorage.getDoctorByEmail (file:///opt/render/project/src/dist/index.js:121:20)
+    at async PostgresStorage.authenticateDoctor (file:///opt/render/project/src/dist/index.js:235:20)
+    at async file:///opt/render/project/src/dist/index.js:1074:22 {
+  length: 109,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '119',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3716',
+  routine: 'errorMissingColumn'
+}
+6:50:03 AM [express] POST /api/auth/doctor/login 500 in 837ms :: {"message":"Internal server error"}
