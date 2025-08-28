@@ -1,4 +1,4 @@
-import { ElevenLabs } from '@elevenlabs/node-api';
+import { ElevenLabs } from 'elevenlabs';
 
 // Initialize ElevenLabs client
 const elevenLabs = new ElevenLabs({

@@ -1,4 +1,4 @@
-import { ElevenLabs } from '@elevenlabs/node-api';
+import { ElevenLabs } from 'elevenlabs';
 import { storage } from '../storage';
 
 // Initialize ElevenLabs client
