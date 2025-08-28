@@ -25,9 +25,13 @@ import bcrypt from "bcrypt";
 
 const { Pool } = pg;
 
-// Database connection - using the provided connection string
+// Database connection - using environment variable
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable is required");
+}
+
 const pool = new Pool({
-  connectionString: "postgresql://postgres:Ngonidzashe2003.@db.ffbbdzkiqnvxyxmmkuft.supabase.co:5432/postgres",
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   },
