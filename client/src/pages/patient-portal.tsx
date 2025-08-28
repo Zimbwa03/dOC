@@ -43,7 +43,7 @@ import {
   Zap,
   Shield,
   Brain,
-  Microphone,
+  Mic,
   Headphones,
   Camera,
   FileImage,
@@ -823,10 +823,10 @@ Generated on: ${new Date().toLocaleString()}
                           Stop
                         </>
                       ) : (
-                        <>
-                          <Microphone className="w-5 h-5 mr-2" />
-                          Voice
-                        </>
+                                                  <>
+                            <Mic className="w-5 h-5 mr-2" />
+                            Voice
+                          </>
                       )}
                     </Button>
                     

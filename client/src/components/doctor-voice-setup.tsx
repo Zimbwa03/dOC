@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Microphone, 
+  Mic, 
   Play, 
   Pause, 
   Upload, 
@@ -239,7 +239,7 @@ export default function DoctorVoiceSetup({ doctorId, doctorName, onVoiceCloned }
                 </>
               ) : (
                 <>
-                  <Microphone className="w-4 h-4" />
+                  <Mic className="w-4 h-4" />
                   Start Recording
                 </>
               )}
