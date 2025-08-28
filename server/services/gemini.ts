@@ -292,7 +292,15 @@ class GeminiService {
       });
 
       const rawJson = response.text;
-      return rawJson ? JSON.parse(rawJson) : this.getFallbackJournals(doctorSpecialty);
+      if (rawJson) {
+        try {
+          return JSON.parse(rawJson);
+        } catch (parseError) {
+          console.error("JSON parsing error for journals:", parseError);
+          return this.getFallbackJournals(doctorSpecialty);
+        }
+      }
+      return this.getFallbackJournals(doctorSpecialty);
     } catch (error: any) {
       console.error("Journal recommendation error:", error);
       

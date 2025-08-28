@@ -382,7 +382,7 @@ export default function DoctorDashboard() {
                 <div className="space-y-4">
                   {journalRecommendations.map((journal, index) => (
                     <div 
-                      key={index} 
+                      key={`${journal.title}-${index}`} 
                           className="consultation-card rounded-lg p-4 hover:bg-muted/50 transition-colors"
                       data-testid={`journal-${index}`}
                     >
