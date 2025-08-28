@@ -136,7 +136,7 @@ export default function PatientPortal() {
   const [consultationMode, setConsultationMode] = useState<'text' | 'voice' | 'video'>('text');
   
   // Refs
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   useEffect(() => {
@@ -153,7 +153,7 @@ export default function PatientPortal() {
 
     // Initialize Web Speech API for patient voice input
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       
       if (recognitionRef.current) {
@@ -161,9 +161,9 @@ export default function PatientPortal() {
         recognitionRef.current.interimResults = false;
         recognitionRef.current.lang = selectedLanguage === 'sn' ? 'sn-ZW' : 'en-US';
 
-        recognitionRef.current.onresult = (event) => {
+        recognitionRef.current.onresult = (event: any) => {
           const results = Array.from(event.results);
-          const latestResult = results[results.length - 1];
+          const latestResult = results[results.length - 1] as any;
           
           if (latestResult.isFinal) {
             const transcriptText = latestResult[0].transcript;
@@ -172,7 +172,7 @@ export default function PatientPortal() {
           }
         };
 
-        recognitionRef.current.onerror = (event) => {
+        recognitionRef.current.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error);
           setIsRecording(false);
           toast({
@@ -206,10 +206,14 @@ export default function PatientPortal() {
     queryKey: ["/api/patient/ai-chat", patientSession?.patient.id],
     enabled: !!patientSession?.patient.id,
     refetchInterval: 5000, // Real-time chat updates
-    onSuccess: (data) => {
-      setChatHistory(data || []);
-    }
   });
+
+  // Update chat history when data changes
+  useEffect(() => {
+    if (aiInteractions) {
+      setChatHistory(aiInteractions);
+    }
+  }, [aiInteractions]);
 
   // Enhanced AI Chat with multilingual support
   const sendMessageMutation = useMutation({

@@ -164,7 +164,7 @@ export default function VoiceCloneSettings({
       formData.append('doctorId', doctorId);
       formData.append('doctorName', doctorName);
 
-      const response = await apiRequest("/api/doctor/clone-voice", {
+      const response = await fetch("/api/doctor/clone-voice", {
         method: "POST",
         body: formData,
       });
@@ -222,13 +222,16 @@ export default function VoiceCloneSettings({
     setIsPlayingTest(true);
 
     try {
-      const response = await apiRequest("/api/digital-doctor/test-voice", {
+      const response = await fetch("/api/digital-doctor/test-voice", {
         method: "POST",
-        body: {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           voiceId: currentVoiceId,
           text: testText,
           language: 'en'
-        },
+        })
       });
 
       if (response.ok) {

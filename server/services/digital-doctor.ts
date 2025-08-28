@@ -190,12 +190,14 @@ export class DigitalDoctorService {
     try {
       const voiceSettings = this.getVoiceSettings(language);
       
-      const audioStream = await elevenLabs.textToSpeech.convert({
-        text,
-        voice_id: voiceId,
-        model_id: this.modelId,
-        voice_settings: voiceSettings
-      });
+      const audioStream = await elevenLabs.textToSpeech.convert(
+        voiceId,
+        {
+          text,
+          model_id: this.modelId,
+          voice_settings: voiceSettings
+        }
+      );
 
       // In a real implementation, you would save this to cloud storage
       // and return a public URL. For now, we'll return a mock response

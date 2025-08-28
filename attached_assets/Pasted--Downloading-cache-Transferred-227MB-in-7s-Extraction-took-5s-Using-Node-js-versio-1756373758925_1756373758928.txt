@@ -1,0 +1,42 @@
+==> Downloading cache...
+==> Transferred 227MB in 7s. Extraction took 5s.
+==> Using Node.js version 22.16.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Running build command 'npm install; npm run build'...
+changed 1 package, and audited 611 packages in 3s
+81 packages are looking for funding
+  run `npm fund` for details
+11 vulnerabilities (3 low, 8 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> rest-express@1.0.0 build
+> tsc && vite build
+client/src/components/voice-clone-settings.tsx(140,68): error TS2345: Argument of type '{ method: string; body: FormData; }' is not assignable to parameter of type 'string'.
+client/src/components/voice-clone-settings.tsx(198,75): error TS2345: Argument of type '{ method: string; body: { voiceId: string; text: string; language: string; }; }' is not assignable to parameter of type 'string'.
+client/src/pages/analytics.tsx(363,27): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+client/src/pages/patient-portal.tsx(139,33): error TS2304: Cannot find name 'SpeechRecognition'.
+client/src/pages/patient-portal.tsx(156,40): error TS2339: Property 'webkitSpeechRecognition' does not exist on type '(Window & typeof globalThis & Record<"webkitSpeechRecognition", unknown>) | (Window & typeof globalThis & Record<"SpeechRecognition", unknown>)'.
+  Property 'webkitSpeechRecognition' does not exist on type 'Window & typeof globalThis & Record<"SpeechRecognition", unknown>'.
+client/src/pages/patient-portal.tsx(156,74): error TS2339: Property 'SpeechRecognition' does not exist on type '(Window & typeof globalThis & Record<"webkitSpeechRecognition", unknown>) | (Window & typeof globalThis & Record<"SpeechRecognition", unknown>)'.
+  Property 'SpeechRecognition' does not exist on type 'Window & typeof globalThis & Record<"webkitSpeechRecognition", unknown>'.
+client/src/pages/patient-portal.tsx(164,44): error TS7006: Parameter 'event' implicitly has an 'any' type.
+client/src/pages/patient-portal.tsx(168,15): error TS18046: 'latestResult' is of type 'unknown'.
+client/src/pages/patient-portal.tsx(169,36): error TS18046: 'latestResult' is of type 'unknown'.
+client/src/pages/patient-portal.tsx(175,43): error TS7006: Parameter 'event' implicitly has an 'any' type.
+client/src/pages/patient-portal.tsx(209,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<{ id: string; doctorId: string | null; patientId: string | null; createdAt: Date | null; message: string; response: string; interactionType: string | null; }[], Error, { ...; }[], QueryKey>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onSuccess' does not exist in type 'DefinedInitialDataOptions<{ id: string; doctorId: string | null; patientId: string | null; createdAt: Date | null; message: string; response: string; interactionType: string | null; }[], Error, { ...; }[], QueryKey>'.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<{ id: string; doctorId: string | null; patientId: string | null; createdAt: Date | null; message: string; response: string; interactionType: string | null; }[], Error, { ...; }[], QueryKey>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onSuccess' does not exist in type 'UndefinedInitialDataOptions<{ id: string; doctorId: string | null; patientId: string | null; createdAt: Date | null; message: string; response: string; interactionType: string | null; }[], Error, { ...; }[], QueryKey>'.
+  Overload 3 of 3, '(options: UseQueryOptions<{ id: string; doctorId: string | null; patientId: string | null; createdAt: Date | null; message: string; response: string; interactionType: string | null; }[], Error, { ...; }[], QueryKey>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Object literal may only specify known properties, and 'onSuccess' does not exist in type 'UseQueryOptions<{ id: string; doctorId: string | null; patientId: string | null; createdAt: Date | null; message: string; response: string; interactionType: string | null; }[], Error, { ...; }[], QueryKey>'.
+client/src/pages/patient-portal.tsx(209,17): error TS7006: Parameter 'data' implicitly has an 'any' type.
+client/src/services/elevenlabs.ts(4,24): error TS2351: This expression is not constructable.
+  Type 'typeof import("/opt/render/project/src/node_modules/elevenlabs/api/index")' has no construct signatures.
+server/services/digital-doctor.ts(193,57): error TS2554: Expected 2-3 arguments, but got 1.
+==> Build failed 😞
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+Need bett

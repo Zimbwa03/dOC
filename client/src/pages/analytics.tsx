@@ -360,13 +360,13 @@ export default function Analytics() {
                           Recommended Reading - Week {index + 1}
                         </h5>
                         <div className="text-xs text-muted-foreground">
-                          {week.recommendedJournals && Array.isArray(week.recommendedJournals) && 
+                          {week.recommendedJournals && Array.isArray(week.recommendedJournals) ? 
                             (week.recommendedJournals as any[]).slice(0, 2).map((journal: any, jIndex: number) => (
-                              <div key={jIndex} className="mb-2">
+                              <div key={`journal-${week.id}-${jIndex}`} className="mb-2">
                                 <p className="font-medium">{journal.title || `Research Article ${jIndex + 1}`}</p>
                                 <p className="text-xs">{journal.journal || "Medical Journal"}</p>
                               </div>
-                            ))
+                            )) : null
                           }
                         </div>
                       </div>
