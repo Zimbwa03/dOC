@@ -180,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/doctor/patients/recent/:doctorId", async (req, res) => {
     try {
       const { doctorId } = req.params;
-      const consultations = await storage.getConsultationsByDoctorId(doctorId, 5);
+      const consultations = await storage.getConsultationsByDoctorId(doctorId, 10);
       
       const recentPatients = [];
       for (const consultation of consultations) {
@@ -199,6 +199,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(recentPatients);
     } catch (error) {
       console.error("Recent patients fetch error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/doctor/patients/all/:doctorId", async (req, res) => {
+    try {
+      const { doctorId } = req.params;
+      const patients = await storage.getPatientsByDoctorId(doctorId);
+      
+      const patientsWithConsultations = [];
+      for (const patient of patients) {
+        const latestConsultation = await storage.getLatestConsultationByPatientId(patient.id);
+        patientsWithConsultations.push({
+          id: patient.id,
+          name: patient.fullName,
+          phoneNumber: patient.phoneNumber,
+          lastConsultation: latestConsultation?.consultationDate || null,
+          totalConsultations: latestConsultation ? 1 : 0, // This could be enhanced to count all consultations
+          status: latestConsultation?.status || 'no_consultations'
+        });
+      }
+
+      res.json(patientsWithConsultations);
+    } catch (error) {
+      console.error("All patients fetch error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.get("/api/doctor/consultations/:doctorId", async (req, res) => {
+    try {
+      const { doctorId } = req.params;
+      const { limit = 20, status } = req.query;
+      
+      let consultations = await storage.getConsultationsByDoctorId(doctorId, parseInt(limit as string));
+      
+      if (status) {
+        consultations = consultations.filter(c => c.status === status);
+      }
+
+      const consultationsWithPatients = [];
+      for (const consultation of consultations) {
+        const patient = await storage.getPatientById(consultation.patientId);
+        if (patient) {
+          consultationsWithPatients.push({
+            ...consultation,
+            patientName: patient.fullName,
+            patientPhone: patient.phoneNumber
+          });
+        }
+      }
+
+      res.json(consultationsWithPatients);
+    } catch (error) {
+      console.error("Consultations fetch error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
@@ -227,6 +282,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(recommendations);
     } catch (error) {
       console.error("Journal recommendations error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Consultation Management Routes
+  app.post("/api/consultations", async (req, res) => {
+    try {
+      const { doctorId, patientId, transcript, doctorNotes, aiSuggestions, diagnosis, prescriptions, durationMinutes } = req.body;
+      
+      if (!doctorId || !patientId) {
+        return res.status(400).json({ message: "Doctor ID and Patient ID are required" });
+      }
+
+      // Create consultation
+      const consultation = await storage.createConsultation({
+        doctorId,
+        patientId,
+        transcript: transcript || "",
+        doctorNotes: doctorNotes || "",
+        aiSuggestions: aiSuggestions || "",
+        diagnosis: diagnosis || "",
+        prescriptions: prescriptions || {},
+        durationMinutes: durationMinutes || 0,
+        status: "completed"
+      });
+
+      // Update doctor analytics
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      weekStart.setHours(0, 0, 0, 0);
+
+      const existingAnalytics = await storage.getDoctorAnalytics(doctorId, weekStart);
+      const currentWeek = existingAnalytics[0];
+
+      if (currentWeek) {
+        // Update existing week
+        await storage.createOrUpdateDoctorAnalytics({
+          doctorId,
+          weekStart,
+          patientsSeen: (currentWeek.patientsSeen || 0) + 1,
+          consultationHours: parseFloat(currentWeek.consultationHours || "0") + (durationMinutes / 60),
+          averageAccuracy: parseFloat(currentWeek.averageAccuracy || "0"), // Will be updated with AI accuracy
+          revenue: parseFloat(currentWeek.revenue || "0") + 150, // Assuming $150 per consultation
+          recommendedJournals: currentWeek.recommendedJournals
+        });
+      } else {
+        // Create new week
+        await storage.createOrUpdateDoctorAnalytics({
+          doctorId,
+          weekStart,
+          patientsSeen: 1,
+          consultationHours: durationMinutes / 60,
+          averageAccuracy: 0,
+          revenue: 150,
+          recommendedJournals: []
+        });
+      }
+
+      res.status(201).json({ 
+        message: "Consultation created successfully", 
+        consultation 
+      });
+    } catch (error) {
+      console.error("Consultation creation error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });

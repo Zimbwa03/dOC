@@ -264,7 +264,7 @@ export default function ConsultationRoom() {
     setIsPaused(false);
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     if (recognitionRef.current) {
       recognitionRef.current.stop();
     }
@@ -273,6 +273,50 @@ export default function ConsultationRoom() {
     }
     setIsRecording(false);
     setIsPaused(false);
+    
+    // Calculate session duration
+    const endTime = new Date();
+    const duration = sessionStartTimeRef.current ? 
+      Math.floor((endTime.getTime() - sessionStartTimeRef.current.getTime()) / 1000) : 0;
+    
+    // Save consultation to database
+    if (currentSession && currentSession.patientId) {
+      try {
+        const consultationData = {
+          doctorId: currentSession.doctorId,
+          patientId: currentSession.patientId,
+          transcript: transcript.map(entry => `${entry.speaker}: ${entry.text}`).join('\n'),
+          doctorNotes: doctorNotes,
+          aiSuggestions: aiInsights.map(insight => insight.content).join('\n'),
+          diagnosis: "", // Could be extracted from AI insights or added manually
+          prescriptions: {},
+          durationMinutes: Math.floor(duration / 60)
+        };
+
+        const response = await apiRequest("POST", "/api/consultations", consultationData);
+        
+        if (response.success) {
+          toast({
+            title: "Consultation Saved",
+            description: "Consultation has been successfully saved to your records",
+          });
+          
+          // Reset session
+          setCurrentSession(null);
+          setTranscript([]);
+          setAiInsights([]);
+          setDoctorNotes("");
+          setSessionDuration(0);
+          sessionStartTimeRef.current = null;
+        }
+      } catch (error) {
+        toast({
+          title: "Save Failed",
+          description: "Could not save consultation. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
     
     toast({
       title: "Recording Stopped",

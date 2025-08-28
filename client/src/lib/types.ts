@@ -72,4 +72,16 @@ export interface PatientSummary {
   lastConsultation: Date;
   condition: string;
   status: 'completed' | 'in_progress' | 'scheduled';
+  phoneNumber?: string;
+  totalConsultations?: number;
+}
+
+export interface ConsultationSummary {
+  id: string;
+  patientName: string;
+  patientPhone: string;
+  consultationDate: Date;
+  durationMinutes: number;
+  status: string;
+  diagnosis?: string;
 }
