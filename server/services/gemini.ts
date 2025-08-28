@@ -302,9 +302,12 @@ class GeminiService {
       const rawJson = response.text;
       if (rawJson) {
         try {
-          return JSON.parse(rawJson);
+          // Clean up the JSON string - remove any markdown formatting or extra characters
+          const cleanJson = rawJson.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          return JSON.parse(cleanJson);
         } catch (parseError) {
           console.error("JSON parsing error for journals:", parseError);
+          console.error("Raw response:", rawJson);
           return this.getFallbackJournals(doctorSpecialty);
         }
       }

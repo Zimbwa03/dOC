@@ -18,6 +18,26 @@ import {
   Activity,
   BarChart3
 } from "lucide-react";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  type ChartConfig 
+} from "@/components/ui/chart";
+import { 
+  LineChart, 
+  Line, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid,
+  ResponsiveContainer,
+  Area,
+  AreaChart
+} from "recharts";
 import { Link } from "wouter";
 import type { DoctorAnalytics } from "@shared/schema";
 
@@ -188,6 +208,63 @@ export default function Analytics() {
             )}
           </CardContent>
         </Card>
+
+        {/* Performance Charts */}
+        {analyticsData?.monthlyTrends && (
+          <div className="grid lg:grid-cols-2 gap-8 mb-8">
+            {/* Patient Trends Chart */}
+            <Card data-testid="patients-chart">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-primary" />
+                  Patient Trends
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={analyticsData.monthlyTrends.patients.map((patients, index) => ({
+                      week: `Week ${index + 1}`,
+                      patients
+                    }))}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="week" />
+                      <YAxis />
+                      <ChartTooltip />
+                      <Area type="monotone" dataKey="patients" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Revenue Trends Chart */}
+            <Card data-testid="revenue-chart">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <DollarSign className="w-5 h-5 mr-2 text-primary" />
+                  Revenue Trends
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={analyticsData.monthlyTrends.revenue.map((revenue, index) => ({
+                      week: `Week ${index + 1}`,
+                      revenue
+                    }))}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="week" />
+                      <YAxis />
+                      <ChartTooltip />
+                      <Bar dataKey="revenue" fill="hsl(var(--primary))" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Weekly Analytics */}
