@@ -233,7 +233,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("All patients fetch error:", error);
       res.status(500).json({ 
         message: "Internal server error",
-        error: error.message 
+        error: error instanceof Error ? error.message : "Unknown error" 
       });
     }
   });
@@ -281,7 +281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const recentConsultations = await storage.getConsultationsByDoctorId(doctorId, 10);
       const recentCases = recentConsultations
         .map(c => c.diagnosis)
-        .filter(d => d)
+        .filter((d): d is string => d !== null)
         .slice(0, 5);
 
       const recommendations = await geminiService.recommendJournals(
@@ -332,10 +332,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doctorId,
           weekStart,
           patientsSeen: (currentWeek.patientsSeen || 0) + 1,
-          consultationHours: parseFloat(currentWeek.consultationHours || "0") + (durationMinutes / 60),
-          averageAccuracy: parseFloat(currentWeek.averageAccuracy || "0"), // Will be updated with AI accuracy
-          revenue: parseFloat(currentWeek.revenue || "0") + 150, // Assuming $150 per consultation
-          recommendedJournals: currentWeek.recommendedJournals
+          consultationHours: (parseFloat(currentWeek.consultationHours || "0") + (durationMinutes / 60)).toString(),
+          averageAccuracy: (parseFloat(currentWeek.averageAccuracy || "0")).toString(), // Will be updated with AI accuracy
+          revenue: (parseFloat(currentWeek.revenue || "0") + 150).toString(), // Assuming $150 per consultation
+          recommendedJournals: currentWeek.recommendedJournals as any
         });
       } else {
         // Create new week
@@ -343,9 +343,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           doctorId,
           weekStart,
           patientsSeen: 1,
-          consultationHours: durationMinutes / 60,
-          averageAccuracy: 0,
-          revenue: 150,
+          consultationHours: (durationMinutes / 60).toString(),
+          averageAccuracy: "0",
+          revenue: "150",
           recommendedJournals: []
         });
       }
@@ -384,7 +384,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("AI analysis error:", error);
-      res.status(500).json({ message: "AI analysis failed", error: error.message });
+      res.status(500).json({ message: "AI analysis failed", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 
@@ -693,7 +693,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const digitalDoctor = new DigitalDoctorService();
-      const voiceMessage = await digitalDoctor.textToSpeech(text, voiceId, language);
+      const voiceMessage = await (digitalDoctor as any).textToSpeech(text, voiceId, language);
 
       res.json({
         success: true,
@@ -725,14 +725,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Handle different types of real-time updates
         switch (data.type) {
           case 'join_consultation':
-            ws.consultationId = data.consultationId;
+            (ws as any).consultationId = data.consultationId;
             ws.send(JSON.stringify({ type: 'joined', consultationId: data.consultationId }));
             break;
             
           case 'live_transcript':
             // Broadcast transcript updates to other participants
             wss.clients.forEach((client) => {
-              if (client !== ws && client.consultationId === data.consultationId) {
+              if (client !== ws && (client as any).consultationId === data.consultationId) {
                 client.send(JSON.stringify({
                   type: 'transcript_update',
                   data: data.transcript
@@ -744,7 +744,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           case 'ai_insight':
             // Broadcast AI insights to consultation participants
             wss.clients.forEach((client) => {
-              if (client !== ws && client.consultationId === data.consultationId) {
+              if (client !== ws && (client as any).consultationId === data.consultationId) {
                 client.send(JSON.stringify({
                   type: 'ai_insight_update',
                   data: data.insight
