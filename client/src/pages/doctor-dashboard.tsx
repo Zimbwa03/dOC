@@ -401,6 +401,7 @@ export default function DoctorDashboard() {
                           size="sm" 
                           className="p-0 h-auto text-xs mt-2"
                           data-testid={`journal-link-${index}`}
+                          onClick={() => window.open(journal.url, '_blank')}
                         >
                           <ArrowRight className="w-3 h-3 mr-1" />
                           Read More
