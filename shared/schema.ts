@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, uuid, timestamptz, integer, decimal, jsonb, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, uuid, timestamp, integer, decimal, jsonb, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -13,8 +13,8 @@ export const doctors = pgTable("doctors", {
   practiceName: varchar("practice_name"),
   phoneNumber: varchar("phone_number"),
   voiceSampleUrl: varchar("voice_sample_url"),
-  createdAt: timestamptz("created_at").defaultNow(),
-  updatedAt: timestamptz("updated_at").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
 // Patients table
@@ -23,8 +23,8 @@ export const patients = pgTable("patients", {
   fullName: varchar("full_name").notNull(),
   phoneNumber: varchar("phone_number").notNull().unique(),
   doctorId: uuid("doctor_id").references(() => doctors.id),
-  createdAt: timestamptz("created_at").defaultNow(),
-  updatedAt: timestamptz("updated_at").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
 // Consultations table
@@ -32,7 +32,7 @@ export const consultations = pgTable("consultations", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   doctorId: uuid("doctor_id").references(() => doctors.id).notNull(),
   patientId: uuid("patient_id").references(() => patients.id).notNull(),
-  consultationDate: timestamptz("consultation_date").defaultNow(),
+  consultationDate: timestamp("consultation_date", { withTimezone: true }).defaultNow(),
   durationMinutes: integer("duration_minutes"),
   transcript: text("transcript"),
   doctorNotes: text("doctor_notes"),
@@ -52,7 +52,7 @@ export const patientHealthPlans = pgTable("patient_health_plans", {
   dietPlan: text("diet_plan"),
   exercisePlan: text("exercise_plan"),
   reminders: jsonb("reminders"),
-  createdAt: timestamptz("created_at").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
 // AI Interactions table
@@ -63,14 +63,14 @@ export const aiInteractions = pgTable("ai_interactions", {
   message: text("message").notNull(),
   response: text("response").notNull(),
   interactionType: varchar("interaction_type").default("chat"),
-  createdAt: timestamptz("created_at").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
 // Doctor Analytics table
 export const doctorAnalytics = pgTable("doctor_analytics", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   doctorId: uuid("doctor_id").references(() => doctors.id).notNull(),
-  weekStart: timestamptz("week_start").notNull(),
+  weekStart: timestamp("week_start", { withTimezone: true }).notNull(),
   patientsSeen: integer("patients_seen").default(0),
   consultationHours: decimal("consultation_hours", { precision: 4, scale: 2 }).default("0"),
   averageAccuracy: decimal("average_accuracy", { precision: 3, scale: 2 }).default("0"),
