@@ -367,7 +367,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         doctorSpecialization,
       });
 
-      res.json(analysis);
+      res.json({
+        success: true,
+        ...analysis
+      });
     } catch (error) {
       console.error("AI analysis error:", error);
       res.status(500).json({ message: "AI analysis failed", error: error.message });

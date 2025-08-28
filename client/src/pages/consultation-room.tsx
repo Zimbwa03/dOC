@@ -45,6 +45,12 @@ import { apiRequest } from "@/lib/queryClient";
 import type { VoiceRecognition, AIInsight, TranscriptEntry, ConsultationSession, PatientSummary } from "@/lib/types";
 import { Link } from "wouter";
 
+// Enhanced AI Insight interface
+interface EnhancedAIInsight extends AIInsight {
+  id: string;
+  priority: 'low' | 'medium' | 'high';
+}
+
 const DOCDOT_LOGO = "https://hvlvwvzliqrlmqjbfgoa.supabase.co/storage/v1/object/sign/O_level_Maths/20250526_2027_Young_Medical_Student_remix_01jw6xh6h8fe1ahpkyns3pw1dw-removebg-preview-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iMDVlOWY4Ni0wM2E0LTRmMDktYWI1OS0wNWYyMDM2MmFlNjIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJPX2xldmVsX01hdGhzLzIwMjUwNTI2XzIwMjdfWW91bmdfTWVkaWNhbF9TdHVkZW50X3JlbWl4XzAxanc2eGg2aDhmZTFhaHBreW5zM3B3MWR3LXJlbW92ZWJnLXByZXZpZXctcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NTYzMzUzODUsImV4cCI6NzUwNDU5OTkzODV9.7JnaD1MCTpi3TLE05IbAeYEexxi3t-LVBuVunNvWwEk";
 
 interface PatientRegistration {
@@ -72,24 +78,24 @@ export default function ConsultationRoom() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   // Core states
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [currentSession, setCurrentSession] = useState<ConsultationSession | null>(null);
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
-  const [aiInsights, setAiInsights] = useState<AIInsight[]>([]);
+  const [aiInsights, setAiInsights] = useState<EnhancedAIInsight[]>([]); // Changed to EnhancedAIInsight
   const [patientRegistration, setPatientRegistration] = useState<PatientRegistration>({
     fullName: "",
     phoneNumber: ""
   });
-  
+
   // UI states
   const [isPatientDialogOpen, setIsPatientDialogOpen] = useState(false);
   const [isExistingPatientDialogOpen, setIsExistingPatientDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'transcript' | 'ai' | 'reports'>('transcript');
   const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'sn' | 'mixed'>('en');
-  
+
   // Data states
   const [doctorNotes, setDoctorNotes] = useState("");
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -97,7 +103,7 @@ export default function ConsultationRoom() {
   const [selectedVoiceSample, setSelectedVoiceSample] = useState<string>('');
   const [consultationReport, setConsultationReport] = useState<ConsultationReport | null>(null);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
-  
+
   // Refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -111,7 +117,7 @@ export default function ConsultationRoom() {
     queryFn: async () => {
       const doctorSession = JSON.parse(localStorage.getItem("doctorSession") || "{}");
       if (!doctorSession.doctor?.id) return [];
-      
+
       const response = await apiRequest("GET", `/api/doctor/patients/all/${doctorSession.doctor.id}`);
       const data = await response.json();
       return data;
@@ -143,7 +149,7 @@ export default function ConsultationRoom() {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
-      
+
       if (recognitionRef.current) {
         recognitionRef.current.continuous = true;
         recognitionRef.current.interimResults = true;
@@ -153,14 +159,14 @@ export default function ConsultationRoom() {
         recognitionRef.current.onresult = (event: any) => {
           const results = Array.from(event.results);
           const latestResult = results[results.length - 1] as any;
-          
+
           if (latestResult.isFinal) {
             const transcriptText = latestResult[0].transcript;
             const confidence = latestResult[0].confidence;
-            
+
             // Determine speaker based on voice analysis
             const speaker = determineSpeaker(transcriptText, confidence);
-            
+
             const newEntry: TranscriptEntry = {
               id: Date.now().toString(),
               speaker,
@@ -168,9 +174,9 @@ export default function ConsultationRoom() {
               timestamp: new Date(),
               confidence: confidence
             };
-            
+
             setTranscript(prev => [...prev, newEntry]);
-            
+
             // Trigger AI analysis for medical insights
             analyzeTranscript(transcriptText, speaker);
           }
@@ -231,17 +237,17 @@ export default function ConsultationRoom() {
     // For now, we'll use a simple heuristic based on content and confidence
     const medicalTerms = ['diagnosis', 'symptoms', 'treatment', 'prescription', 'examination'];
     const hasMedicalTerms = medicalTerms.some(term => text.toLowerCase().includes(term));
-    
+
     // Higher confidence + medical terms = likely doctor
     if (confidence > 0.8 && hasMedicalTerms) {
       return 'doctor';
     }
-    
+
     // Lower confidence + personal symptoms = likely patient
     if (confidence < 0.7 && (text.toLowerCase().includes('i feel') || text.toLowerCase().includes('my'))) {
       return 'patient';
     }
-    
+
     // Default to patient for safety
     return 'patient';
   };
@@ -255,12 +261,13 @@ export default function ConsultationRoom() {
         language: selectedLanguage,
         context: transcript.slice(-5).map(entry => `${entry.speaker}: ${entry.text}`).join('\n')
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
-        const insights: AIInsight[] = [
+        const insights: EnhancedAIInsight[] = [ // Changed to EnhancedAIInsight
           {
+            id: Date.now().toString() + Math.random(), // Added unique key
             type: 'diagnostic',
             content: data.diagnosticSuggestions?.[0] || 'Consider additional symptoms for diagnosis',
             confidence: data.confidence || 0.7,
@@ -268,6 +275,7 @@ export default function ConsultationRoom() {
             priority: 'high'
           },
           {
+            id: Date.now().toString() + Math.random(), // Added unique key
             type: 'treatment',
             content: data.recommendedTests?.[0] || 'Review patient history for treatment options',
             confidence: data.confidence || 0.7,
@@ -275,7 +283,7 @@ export default function ConsultationRoom() {
             priority: 'medium'
           }
         ];
-        
+
         setAiInsights(prev => [...prev, ...insights]);
       }
     } catch (error) {
@@ -326,10 +334,10 @@ export default function ConsultationRoom() {
       transcript: [],
       aiInsights: []
     };
-    
+
     setCurrentSession(session);
     sessionStartTimeRef.current = new Date();
-    
+
     if (patientData) {
       setPatientRegistration({
         fullName: patientData.name || patientData.fullName,
@@ -353,30 +361,30 @@ export default function ConsultationRoom() {
           sampleRate: 44100
         } 
       });
-      
+
       // Start speech recognition
       if (recognitionRef.current) {
         recognitionRef.current.start();
       }
-      
+
       // Start audio recording with enhanced quality
       mediaRecorderRef.current = new MediaRecorder(stream, {
         mimeType: 'audio/webm;codecs=opus'
       });
-      
+
       mediaRecorderRef.current.start();
       setIsRecording(true);
       setIsPaused(false);
-      
+
       if (!sessionStartTimeRef.current) {
         sessionStartTimeRef.current = new Date();
       }
-      
+
       toast({
         title: "Recording Started",
         description: "Consultation recording is now active with enhanced voice recognition",
       });
-      
+
     } catch (error) {
       toast({
         title: "Recording Failed",
@@ -394,7 +402,7 @@ export default function ConsultationRoom() {
       mediaRecorderRef.current.pause();
     }
     setIsPaused(true);
-    
+
     toast({
       title: "Recording Paused",
       description: "Consultation is paused. Click Resume to continue.",
@@ -409,7 +417,7 @@ export default function ConsultationRoom() {
       mediaRecorderRef.current.resume();
     }
     setIsPaused(false);
-    
+
     toast({
       title: "Recording Resumed",
       description: "Consultation recording has resumed.",
@@ -428,7 +436,7 @@ export default function ConsultationRoom() {
     }
 
     setIsGeneratingReport(true);
-    
+
     try {
       const response = await apiRequest("POST", "/api/ai/generate-consultation-report", {
         transcript: transcript.map(entry => `${entry.speaker}: ${entry.text}`).join('\n'),
@@ -440,7 +448,7 @@ export default function ConsultationRoom() {
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         setConsultationReport(data.report);
         toast({
@@ -468,15 +476,15 @@ export default function ConsultationRoom() {
     }
     setIsRecording(false);
     setIsPaused(false);
-    
+
     // Calculate session duration
     const endTime = new Date();
     const duration = sessionStartTimeRef.current ? 
       Math.floor((endTime.getTime() - sessionStartTimeRef.current.getTime()) / 1000) : 0;
-    
+
     // Generate report before saving
     await generateConsultationReport();
-    
+
     // Save consultation to database
     if (currentSession && currentSession.patientId) {
       try {
@@ -494,13 +502,13 @@ export default function ConsultationRoom() {
         };
 
         const response = await apiRequest("POST", "/api/consultations", consultationData);
-        
+
         if (response.ok) {
           toast({
             title: "Consultation Saved",
             description: "Consultation has been successfully saved with comprehensive reports",
           });
-          
+
           // Reset session
           setCurrentSession(null);
           setTranscript([]);
@@ -522,7 +530,7 @@ export default function ConsultationRoom() {
 
   const addDoctorNote = (text: string) => {
     if (!text.trim()) return;
-    
+
     const newEntry: TranscriptEntry = {
       id: Date.now().toString(),
       speaker: 'doctor',
@@ -530,7 +538,7 @@ export default function ConsultationRoom() {
       timestamp: new Date(),
       confidence: 1.0
     };
-    
+
     setTranscript(prev => [...prev, newEntry]);
     setDoctorNotes("");
   };
@@ -545,7 +553,7 @@ export default function ConsultationRoom() {
     const transcriptText = transcript.map(entry => 
       `[${entry.timestamp.toLocaleTimeString()}] ${entry.speaker.toUpperCase()}: ${entry.text}`
     ).join('\n\n');
-    
+
     const blob = new Blob([transcriptText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -576,7 +584,7 @@ export default function ConsultationRoom() {
                 <p className="text-sm text-gray-500">Professional Medical Consultation Interface</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               {/* Language Selector */}
               <Select value={selectedLanguage} onValueChange={(value: 'en' | 'sn' | 'mixed') => setSelectedLanguage(value)}>
@@ -589,7 +597,7 @@ export default function ConsultationRoom() {
                   <SelectItem value="mixed">Mixed</SelectItem>
                 </SelectContent>
               </Select>
-              
+
               {currentSession && (
                 <div className="flex items-center space-x-3">
                   <Badge variant="secondary" className="px-4 py-2">
@@ -622,7 +630,7 @@ export default function ConsultationRoom() {
             <Plus className="w-5 h-5 mr-2" />
             Register New Patient
           </Button>
-          
+
           <Button
             onClick={() => {
               refetchPatients();
@@ -634,7 +642,7 @@ export default function ConsultationRoom() {
             <UserCheck className="w-5 h-5 mr-2" />
             Continue with Registered Patient
           </Button>
-          
+
           {currentSession && (
             <>
               <Button
@@ -645,7 +653,7 @@ export default function ConsultationRoom() {
                 <FileDown className="w-4 h-4 mr-2" />
                 Download Transcript
               </Button>
-              
+
               <Button
                 onClick={generateConsultationReport}
                 disabled={isGeneratingReport || transcript.length === 0}
@@ -725,7 +733,7 @@ export default function ConsultationRoom() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   {/* Recording Controls */}
                 <div className="flex items-center space-x-4">
                   <Button
@@ -757,7 +765,7 @@ export default function ConsultationRoom() {
                         </>
                       )}
                   </Button>
-                  
+
                   {isRecording && (
                     <Button
                       onClick={stopRecording}
@@ -770,7 +778,7 @@ export default function ConsultationRoom() {
                     </Button>
                   )}
                   </div>
-                  
+
                   {/* Progress Bar */}
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm text-gray-600">
@@ -805,7 +813,7 @@ export default function ConsultationRoom() {
                     <TabsTrigger value="ai">AI Insights</TabsTrigger>
                     <TabsTrigger value="reports">Reports</TabsTrigger>
                   </TabsList>
-                  
+
                   <TabsContent value="transcript" className="space-y-4">
                     <div className="space-y-3 max-h-96 overflow-y-auto p-4 bg-gray-50 rounded-lg">
                   {transcript.length === 0 ? (
@@ -833,7 +841,7 @@ export default function ConsultationRoom() {
                     ))
                   )}
                 </div>
-                
+
                 {/* Doctor Notes Input */}
                     <div className="border-t pt-4">
                       <div className="flex space-x-3">
@@ -854,7 +862,7 @@ export default function ConsultationRoom() {
                   </div>
                 </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="ai" className="space-y-4">
                     <div className="space-y-4 max-h-96 overflow-y-auto">
                   {aiInsights.length === 0 ? (
@@ -864,9 +872,9 @@ export default function ConsultationRoom() {
                           <p className="text-sm">Real-time medical analysis and recommendations</p>
                     </div>
                   ) : (
-                    aiInsights.map((insight, index) => (
+                    aiInsights.map((insight) => ( // Use insight.id for key
                       <div 
-                        key={index} 
+                        key={insight.id} 
                             className={`bg-white rounded-lg p-4 border-l-4 shadow-sm ${
                               insight.type === 'diagnostic' ? 'border-green-500' : 
                               insight.type === 'treatment' ? 'border-blue-500' : 'border-yellow-500'
@@ -893,31 +901,31 @@ export default function ConsultationRoom() {
                   )}
                     </div>
                   </TabsContent>
-                  
+
                   <TabsContent value="reports" className="space-y-4">
                     {consultationReport ? (
                       <div className="space-y-6">
                         {/* Patient Report */}
                         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                          <h4 className="font-semibold text-blue-800 mb-2">�� Patient Report</h4>
+                          <h4 className="font-semibold text-blue-800 mb-2">Patient Report</h4>
                           <p className="text-sm text-blue-700">{consultationReport.patientReport}</p>
                         </div>
-                        
+
                         {/* Doctor Report */}
                         <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                          <h4 className="font-semibold text-green-800 mb-2">��‍⚕️ Doctor Report</h4>
+                          <h4 className="font-semibold text-green-800 mb-2">Doctor Report</h4>
                           <p className="text-sm text-green-700">{consultationReport.doctorReport}</p>
                         </div>
-                        
+
                         {/* Diagnosis & Prescriptions */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                            <h4 className="font-semibold text-yellow-800 mb-2">🏥 Diagnosis</h4>
+                            <h4 className="font-semibold text-yellow-800 mb-2">Diagnosis</h4>
                             <p className="text-sm text-yellow-700">{consultationReport.diagnosis}</p>
                           </div>
-                          
+
                           <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                            <h4 className="font-semibold text-purple-800 mb-2">💊 Prescriptions</h4>
+                            <h4 className="font-semibold text-purple-800 mb-2">Prescriptions</h4>
                             <ul className="text-sm text-purple-700 space-y-1">
                               {consultationReport.prescriptions.map((prescription, index) => (
                                 <li key={index}>• {prescription}</li>
@@ -976,7 +984,7 @@ export default function ConsultationRoom() {
                       Review Patient History
                   </Button>
                   </div>
-                  
+
                   {/* AI Capabilities */}
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <h5 className="text-sm font-medium text-gray-700 mb-2">AI Capabilities:</h5>
@@ -991,7 +999,7 @@ export default function ConsultationRoom() {
                 </div>
               </CardContent>
             </Card>
-            
+
             {/* Session Statistics */}
             <Card className="shadow-lg">
               <CardHeader>
@@ -1012,7 +1020,7 @@ export default function ConsultationRoom() {
                       <p className="text-xs text-green-600">AI Insights</p>
                     </div>
                   </div>
-                  
+
                   <div className="text-center p-3 bg-purple-50 rounded-lg">
                     <p className="text-2xl font-bold text-purple-600">{formatDuration(sessionDuration)}</p>
                     <p className="text-xs text-purple-600">Session Duration</p>
