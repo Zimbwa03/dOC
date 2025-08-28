@@ -373,7 +373,7 @@ export default function ConsultationRoom() {
     }
   };
 
-  // Enhanced recording functions
+  // Mobile-compatible recording functions using utility
   const startRecording = async () => {
     try {
       if (!currentSession) {
@@ -381,22 +381,33 @@ export default function ConsultationRoom() {
         return;
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          sampleRate: 44100
-        } 
-      });
+      // Import mobile utilities dynamically to avoid SSR issues
+      const { requestMicrophonePermission, getSupportedAudioMimeType } = await import('@/lib/mobile-utils');
+      
+      const permissionResult = await requestMicrophonePermission();
+      
+      if (!permissionResult.success) {
+        toast({
+          title: "Recording Failed",
+          description: permissionResult.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const stream = permissionResult.stream!;
 
       // Start speech recognition
       if (recognitionRef.current) {
         recognitionRef.current.start();
       }
 
-      // Start audio recording with enhanced quality
+      // Get supported MIME type for this device
+      const mimeType = getSupportedAudioMimeType();
+      
+      // Start audio recording with device-compatible settings
       mediaRecorderRef.current = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
+        mimeType
       });
 
       mediaRecorderRef.current.start();
@@ -413,9 +424,10 @@ export default function ConsultationRoom() {
       });
 
     } catch (error) {
+      console.error('Recording error:', error);
       toast({
         title: "Recording Failed",
-        description: "Could not access microphone. Please check permissions.",
+        description: "Unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     }

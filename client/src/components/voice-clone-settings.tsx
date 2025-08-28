@@ -55,19 +55,45 @@ export default function VoiceCloneSettings({
   const audioChunksRef = useRef<Blob[]>([]);
   const audioContextRef = useRef<AudioContext | null>(null);
 
+  // Mobile-compatible recording function
+  const getSupportedMimeType = () => {
+    const types = [
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/mp4',
+      'audio/mpeg',
+      'audio/wav'
+    ];
+    
+    for (const type of types) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        return type;
+      }
+    }
+    return 'audio/webm'; // Fallback
+  };
+
   // Start recording voice sample
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      // Mobile-optimized audio constraints
+      const constraints = {
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          sampleRate: 44100
-        } 
-      });
+          autoGainControl: true,
+          // Remove fixed sampleRate for better mobile compatibility
+          ...(window.navigator.userAgent.includes('Mobile') ? {} : { sampleRate: 44100 })
+        }
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      // Get supported MIME type for this device
+      const mimeType = getSupportedMimeType();
 
       mediaRecorderRef.current = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
+        mimeType
       });
 
       audioChunksRef.current = [];
@@ -79,7 +105,7 @@ export default function VoiceCloneSettings({
       };
 
       mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         setRecordedAudio(audioBlob);
         setIsRecording(false);
         
@@ -98,9 +124,10 @@ export default function VoiceCloneSettings({
       });
 
     } catch (error) {
+      console.error('Recording error:', error);
       toast({
         title: "Recording Failed",
-        description: "Could not access microphone. Please check permissions.",
+        description: "Could not access microphone. Please check permissions and ensure you're using HTTPS.",
         variant: "destructive",
       });
     }
