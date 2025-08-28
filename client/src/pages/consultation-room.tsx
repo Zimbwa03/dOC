@@ -106,16 +106,19 @@ export default function ConsultationRoom() {
   const analyserRef = useRef<AnalyserNode | null>(null);
 
   // Fetch existing patients for the "Registered" button
-  const { data: existingPatients } = useQuery({
+  const { data: existingPatients, refetch: refetchPatients } = useQuery({
     queryKey: ['existingPatients'],
     queryFn: async () => {
       const doctorSession = JSON.parse(localStorage.getItem("doctorSession") || "{}");
       if (!doctorSession.doctor?.id) return [];
       
       const response = await apiRequest("GET", `/api/doctor/patients/all/${doctorSession.doctor.id}`);
-      return response.json();
+      const data = await response.json();
+      return data;
     },
-    enabled: !!localStorage.getItem("doctorSession")
+    enabled: !!localStorage.getItem("doctorSession"),
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
   useEffect(() => {
@@ -621,7 +624,10 @@ export default function ConsultationRoom() {
           </Button>
           
           <Button
-            onClick={() => setIsExistingPatientDialogOpen(true)}
+            onClick={() => {
+              refetchPatients();
+              setIsExistingPatientDialogOpen(true);
+            }}
             variant="outline"
             className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3"
           >
