@@ -190,15 +190,15 @@ export default function DoctorDashboard() {
         {/* Stats Cards - Only show on overview tab */}
         {activeTab === 'overview' && (
           <>
-            <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
               <Card className="stats-card hover:shadow-lg transition-shadow" data-testid="stats-patients">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Patients This Week</p>
-                      <p className="text-2xl font-bold text-primary" data-testid="stat-patients-value">
-                        {statsLoading ? "..." : stats?.patientsThisWeek || 0}
-                      </p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Patients This Week</p>
+                  <p className="text-2xl font-bold text-primary" data-testid="stat-patients-value">
+                    {statsLoading ? "..." : stats?.patientsThisWeek || 0}
+                  </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         <TrendingUp className="w-3 h-3 inline mr-1" />
                         +12% from last week
@@ -206,19 +206,19 @@ export default function DoctorDashboard() {
                     </div>
                     <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
                       <Users className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
               <Card className="stats-card hover:shadow-lg transition-shadow" data-testid="stats-hours">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Consultation Hours</p>
-                      <p className="text-2xl font-bold text-primary" data-testid="stat-hours-value">
-                        {statsLoading ? "..." : stats?.consultationHours || 0}
-                      </p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Consultation Hours</p>
+                  <p className="text-2xl font-bold text-primary" data-testid="stat-hours-value">
+                    {statsLoading ? "..." : stats?.consultationHours || 0}
+                  </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         <Activity className="w-3 h-3 inline mr-1" />
                         This week
@@ -226,19 +226,19 @@ export default function DoctorDashboard() {
                     </div>
                     <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
                       <Clock className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
               <Card className="stats-card hover:shadow-lg transition-shadow" data-testid="stats-accuracy">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">AI Accuracy</p>
-                      <p className="text-2xl font-bold text-success" data-testid="stat-accuracy-value">
-                        {statsLoading ? "..." : `${stats?.accuracyScore || 0}%`}
-                      </p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">AI Accuracy</p>
+                  <p className="text-2xl font-bold text-success" data-testid="stat-accuracy-value">
+                    {statsLoading ? "..." : `${stats?.accuracyScore || 0}%`}
+                  </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         <Brain className="w-3 h-3 inline mr-1" />
                         AI-powered insights
@@ -246,19 +246,19 @@ export default function DoctorDashboard() {
                     </div>
                     <div className="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center">
                       <Brain className="w-6 h-6 text-success" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
               <Card className="stats-card hover:shadow-lg transition-shadow" data-testid="stats-revenue">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Revenue</p>
-                      <p className="text-2xl font-bold text-primary" data-testid="stat-revenue-value">
-                        {statsLoading ? "..." : `$${stats?.revenue || 0}`}
-                      </p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Revenue</p>
+                  <p className="text-2xl font-bold text-primary" data-testid="stat-revenue-value">
+                    {statsLoading ? "..." : `$${stats?.revenue || 0}`}
+                  </p>
                       <p className="text-xs text-muted-foreground mt-1">
                         <Calendar className="w-3 h-3 inline mr-1" />
                         This week
@@ -266,159 +266,159 @@ export default function DoctorDashboard() {
                     </div>
                     <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
                       <DollarSign className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-            {/* Quick Actions */}
+        {/* Quick Actions */}
             <Card className="mb-8 hover:shadow-lg transition-shadow" data-testid="quick-actions">
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <Link href="/doctor/consultation">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-4">
+              <Link href="/doctor/consultation">
                     <Button variant="outline" className="w-full h-20 flex flex-col items-center justify-center space-y-2 hover:bg-primary hover:text-primary-foreground transition-colors" data-testid="action-consultation">
-                      <MessageSquare className="w-6 h-6" />
-                      <span>Start Consultation</span>
-                    </Button>
-                  </Link>
-                  <Link href="/doctor/analytics">
+                  <MessageSquare className="w-6 h-6" />
+                  <span>Start Consultation</span>
+                </Button>
+              </Link>
+              <Link href="/doctor/analytics">
                     <Button variant="outline" className="w-full h-20 flex flex-col items-center justify-center space-y-2 hover:bg-primary hover:text-primary-foreground transition-colors" data-testid="action-analytics">
-                      <BarChart3 className="w-6 h-6" />
-                      <span>View Analytics</span>
-                    </Button>
-                  </Link>
+                  <BarChart3 className="w-6 h-6" />
+                  <span>View Analytics</span>
+                </Button>
+              </Link>
                   <Button 
                     variant="outline" 
                     className="w-full h-20 flex flex-col items-center justify-center space-y-2 hover:bg-primary hover:text-primary-foreground transition-colors" 
                     data-testid="action-patients"
                     onClick={() => setActiveTab('patients')}
                   >
-                    <FileText className="w-6 h-6" />
-                    <span>Patient Records</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Recent Patients */}
-              <Card data-testid="recent-patients" className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle>Recent Patients</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {patientsLoading ? (
-                    <div className="space-y-4">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="animate-pulse">
-                          <div className="h-16 bg-muted rounded"></div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : recentPatients && recentPatients.length > 0 ? (
-                    <div className="space-y-4">
-                      {recentPatients.map((patient) => (
-                        <div 
-                          key={patient.id} 
-                          className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors cursor-pointer"
-                          data-testid={`patient-${patient.id}`}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                              <span className="text-primary font-semibold text-sm">
-                                {patient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                              </span>
-                            </div>
-                            <div>
-                              <p className="font-medium" data-testid={`patient-name-${patient.id}`}>
-                                {patient.name}
-                              </p>
-                              <p className="text-sm text-muted-foreground" data-testid={`patient-condition-${patient.id}`}>
-                                {patient.condition}
-                              </p>
-                            </div>
-                          </div>
-                          <Badge 
-                            variant={patient.status === 'completed' ? 'default' : 'secondary'}
-                            data-testid={`patient-status-${patient.id}`}
-                          >
-                            {patient.status}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground" data-testid="no-patients">
-                      <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p>No recent patients</p>
-                      <p className="text-sm">Start a consultation to see patients here</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* AI Journal Recommendations */}
-              <Card data-testid="journal-recommendations" className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Brain className="w-5 h-5 mr-2 text-primary" />
-                    AI Journal Recommendations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {journalsLoading ? (
-                    <div className="space-y-4">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="animate-pulse">
-                          <div className="h-20 bg-muted rounded"></div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : journalRecommendations && journalRecommendations.length > 0 ? (
-                    <div className="space-y-4">
-                      {journalRecommendations.map((journal, index) => (
-                        <div 
-                          key={index} 
-                          className="consultation-card rounded-lg p-4 hover:bg-muted/50 transition-colors"
-                          data-testid={`journal-${index}`}
-                        >
-                          <h5 className="font-medium text-sm mb-2" data-testid={`journal-title-${index}`}>
-                            {journal.title}
-                          </h5>
-                          <p className="text-xs text-muted-foreground mb-2" data-testid={`journal-source-${index}`}>
-                            {journal.journal}
-                          </p>
-                          <p className="text-xs" data-testid={`journal-summary-${index}`}>
-                            {journal.summary}
-                          </p>
-                          {journal.url && (
-                            <Button 
-                              variant="link" 
-                              size="sm" 
-                              className="p-0 h-auto text-xs mt-2"
-                              data-testid={`journal-link-${index}`}
-                            >
-                              <ArrowRight className="w-3 h-3 mr-1" />
-                              Read More
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground" data-testid="no-journals">
-                      <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                      <p>No recommendations yet</p>
-                      <p className="text-sm">Complete consultations to get personalized journal recommendations</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                <FileText className="w-6 h-6" />
+                <span>Patient Records</span>
+              </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Recent Patients */}
+              <Card data-testid="recent-patients" className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle>Recent Patients</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {patientsLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="h-16 bg-muted rounded"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : recentPatients && recentPatients.length > 0 ? (
+                <div className="space-y-4">
+                  {recentPatients.map((patient) => (
+                    <div 
+                      key={patient.id} 
+                          className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors cursor-pointer"
+                      data-testid={`patient-${patient.id}`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                          <span className="text-primary font-semibold text-sm">
+                            {patient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-medium" data-testid={`patient-name-${patient.id}`}>
+                            {patient.name}
+                          </p>
+                          <p className="text-sm text-muted-foreground" data-testid={`patient-condition-${patient.id}`}>
+                            {patient.condition}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge 
+                        variant={patient.status === 'completed' ? 'default' : 'secondary'}
+                        data-testid={`patient-status-${patient.id}`}
+                      >
+                        {patient.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground" data-testid="no-patients">
+                  <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No recent patients</p>
+                  <p className="text-sm">Start a consultation to see patients here</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* AI Journal Recommendations */}
+              <Card data-testid="journal-recommendations" className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Brain className="w-5 h-5 mr-2 text-primary" />
+                AI Journal Recommendations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {journalsLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="h-20 bg-muted rounded"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : journalRecommendations && journalRecommendations.length > 0 ? (
+                <div className="space-y-4">
+                  {journalRecommendations.map((journal, index) => (
+                    <div 
+                      key={index} 
+                          className="consultation-card rounded-lg p-4 hover:bg-muted/50 transition-colors"
+                      data-testid={`journal-${index}`}
+                    >
+                      <h5 className="font-medium text-sm mb-2" data-testid={`journal-title-${index}`}>
+                        {journal.title}
+                      </h5>
+                      <p className="text-xs text-muted-foreground mb-2" data-testid={`journal-source-${index}`}>
+                        {journal.journal}
+                      </p>
+                      <p className="text-xs" data-testid={`journal-summary-${index}`}>
+                        {journal.summary}
+                      </p>
+                      {journal.url && (
+                        <Button 
+                          variant="link" 
+                          size="sm" 
+                          className="p-0 h-auto text-xs mt-2"
+                          data-testid={`journal-link-${index}`}
+                        >
+                          <ArrowRight className="w-3 h-3 mr-1" />
+                          Read More
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground" data-testid="no-journals">
+                  <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No recommendations yet</p>
+                  <p className="text-sm">Complete consultations to get personalized journal recommendations</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
           </>
         )}
 
