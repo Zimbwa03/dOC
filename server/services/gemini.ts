@@ -9,6 +9,8 @@ export interface MedicalAnalysisRequest {
   patientHistory?: string;
   transcript?: string;
   doctorSpecialization?: string;
+  language?: string;
+  transcriptionLanguage?: string;
 }
 
 export interface MedicalAnalysisResponse {
@@ -53,6 +55,10 @@ class GeminiService {
       Analyze the provided medical information and provide diagnostic insights, treatment recommendations, and clinical guidance.
       Focus on evidence-based medicine and current clinical guidelines.
       
+      IMPORTANT: The consultation may be conducted in multiple languages including English, Shona (Zimbabwe), and other languages.
+      Always analyze the content regardless of language and provide responses in English for medical accuracy.
+      If the transcript contains non-English text, translate and analyze the medical content appropriately.
+      
       Respond with structured JSON containing:
       - diagnosticSuggestions: array of potential diagnoses with reasoning
       - recommendedTests: array of suggested diagnostic tests
@@ -67,13 +73,15 @@ class GeminiService {
       const prompt = `
       Medical Consultation Analysis:
       
+      Language Context: ${request.language || 'en'} (Transcription: ${request.transcriptionLanguage || 'en'})
       Symptoms: ${request.symptoms.join(', ')}
       ${request.patientHistory ? `Patient History: ${request.patientHistory}` : ''}
       ${request.transcript ? `Consultation Transcript: ${request.transcript}` : ''}
       ${request.doctorSpecialization ? `Doctor Specialization: ${request.doctorSpecialization}` : ''}
       
       Please provide comprehensive medical analysis and recommendations based on the information provided.
-      Focus on patient safety and evidence-based medicine.`;
+      Focus on patient safety and evidence-based medicine.
+      If the transcript contains non-English content, ensure proper translation and analysis for medical accuracy.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-2.0-flash-exp",

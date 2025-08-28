@@ -10,6 +10,7 @@ import ConsultationRoom from "@/pages/consultation-room";
 import PatientAuth from "@/pages/patient-auth";
 import PatientPortal from "@/pages/patient-portal";
 import Analytics from "@/pages/analytics";
+import MultilingualTest from "@/pages/multilingual-test";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/doctor/analytics" component={Analytics} />
       <Route path="/patient/auth" component={PatientAuth} />
       <Route path="/patient/portal" component={PatientPortal} />
+      <Route path="/test/multilingual" component={MultilingualTest} />
       <Route component={NotFound} />
     </Switch>
   );

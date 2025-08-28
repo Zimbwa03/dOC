@@ -20,10 +20,12 @@ import {
   TrendingUp,
   Activity,
   Calendar,
-  Phone
+  Phone,
+  Languages
 } from "lucide-react";
 import type { DoctorStats, PatientSummary, JournalRecommendation, ConsultationSummary } from "@/lib/types";
 import { Link } from "wouter";
+import VoiceCloneSettings from "@/components/voice-clone-settings";
 
 const DOCDOT_LOGO = "https://hvlvwvzliqrlmqjbfgoa.supabase.co/storage/v1/object/sign/O_level_Maths/20250526_2027_Young_Medical_Student_remix_01jw6xh6h8fe1ahpkyns3pw1dw-removebg-preview-removebg-preview.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iMDVlOWY4Ni0wM2E0LTRmMDktYWI1OS0wNWYyMDM2MmFlNjIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJPX2xldmVsX01hdGhzLzIwMjUwNTI2XzIwMjdfWW91bmdfTWVkaWNhbF9TdHVkZW50X3JlbWl4XzAxanc2eGg2aDhmZTFhaHBreW5zM3B3MWR3LXJlbW92ZWJnLXByZXZpZXctcmVtb3ZlYmctcHJldmlldy5wbmciLCJpYXQiOjE3NTYzMzUzODUsImV4cCI6NzUwNDU5OTkzODV9.7JnaD1MCTpi3TLE05IbAeYEexxi3t-LVBuVunNvWwEk";
 
@@ -33,13 +35,14 @@ interface DoctorSession {
     fullName: string;
     specialization: string;
     email: string;
+    voiceId?: string;
   };
 }
 
 export default function DoctorDashboard() {
   const [, setLocation] = useLocation();
   const [doctorSession, setDoctorSession] = useState<DoctorSession | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'patients' | 'consultations'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'patients' | 'consultations' | 'voice-settings'>('overview');
 
   useEffect(() => {
     const session = localStorage.getItem("doctorSession");
@@ -185,6 +188,16 @@ export default function DoctorDashboard() {
           >
             Consultations
           </button>
+          <button
+            onClick={() => setActiveTab('voice-settings')}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'voice-settings'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Voice Settings
+          </button>
         </div>
 
         {/* Stats Cards - Only show on overview tab */}
@@ -291,12 +304,18 @@ export default function DoctorDashboard() {
                   <span>View Analytics</span>
                 </Button>
               </Link>
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-20 flex flex-col items-center justify-center space-y-2 hover:bg-primary hover:text-primary-foreground transition-colors" 
-                    data-testid="action-patients"
-                    onClick={() => setActiveTab('patients')}
-                  >
+              <Link href="/test/multilingual">
+                    <Button variant="outline" className="w-full h-20 flex flex-col items-center justify-center space-y-2 hover:bg-primary hover:text-primary-foreground transition-colors" data-testid="action-multilingual">
+                  <Languages className="w-6 h-6" />
+                  <span>Test Multi-Lingual</span>
+                </Button>
+              </Link>
+              <Button 
+                variant="outline" 
+                className="w-full h-20 flex flex-col items-center justify-center space-y-2 hover:bg-primary hover:text-primary-foreground transition-colors" 
+                data-testid="action-patients"
+                onClick={() => setActiveTab('patients')}
+              >
                 <FileText className="w-6 h-6" />
                 <span>Patient Records</span>
               </Button>
@@ -544,6 +563,27 @@ export default function DoctorDashboard() {
               )}
             </CardContent>
           </Card>
+        )}
+
+        {/* Voice Settings Tab */}
+        {activeTab === 'voice-settings' && doctorSession && (
+          <VoiceCloneSettings
+            doctorId={doctorSession.doctor.id}
+            doctorName={doctorSession.doctor.fullName}
+            currentVoiceId={doctorSession.doctor.voiceId}
+            onVoiceCloned={(voiceId) => {
+              // Update the session with new voice ID
+              const updatedSession = {
+                ...doctorSession,
+                doctor: {
+                  ...doctorSession.doctor,
+                  voiceId
+                }
+              };
+              setDoctorSession(updatedSession);
+              localStorage.setItem("doctorSession", JSON.stringify(updatedSession));
+            }}
+          />
         )}
       </div>
     </div>

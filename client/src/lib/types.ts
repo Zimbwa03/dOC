@@ -6,10 +6,12 @@ export interface VoiceRecognition {
 }
 
 export interface AIInsight {
+  id: string;
   type: 'diagnostic' | 'treatment' | 'clinical_note' | 'warning';
   content: string;
   confidence: number;
   priority: 'low' | 'medium' | 'high';
+  timestamp: Date;
   sources?: string[];
 }
 

@@ -25,9 +25,25 @@ import bcrypt from "bcrypt";
 
 const { Pool } = pg;
 
-// Database connection
+// Database connection - using the provided connection string
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: "postgresql://postgres:Ngonidzashe2003.@db.ffbbdzkiqnvxyxmmkuft.supabase.co:5432/postgres",
+  ssl: {
+    rejectUnauthorized: false
+  },
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+// Test the connection
+pool.on('connect', () => {
+  console.log('Connected to PostgreSQL database');
+});
+
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
 });
 
 export const db = drizzle(pool);
@@ -213,10 +229,10 @@ export class PostgresStorage implements IStorage {
 
   // Analytics operations
   async getDoctorAnalytics(doctorId: string, weekStart?: Date): Promise<DoctorAnalytics[]> {
-    const query = db.select().from(doctorAnalytics).where(eq(doctorAnalytics.doctorId, doctorId));
+    let query = db.select().from(doctorAnalytics).where(eq(doctorAnalytics.doctorId, doctorId));
     
     if (weekStart) {
-      query.where(and(
+      query = db.select().from(doctorAnalytics).where(and(
         eq(doctorAnalytics.doctorId, doctorId),
         gte(doctorAnalytics.weekStart, weekStart)
       ));

@@ -363,7 +363,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Analysis Routes
   app.post("/api/ai/analyze-consultation", async (req, res) => {
     try {
-      const { transcript, symptoms, patientHistory, doctorSpecialization } = req.body;
+      const { transcript, symptoms, patientHistory, doctorSpecialization, language, transcriptionLanguage } = req.body;
       
       if (!transcript && !symptoms) {
         return res.status(400).json({ message: "Transcript or symptoms required" });
@@ -374,6 +374,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         patientHistory,
         transcript,
         doctorSpecialization,
+        language,
+        transcriptionLanguage,
       });
 
       res.json({
