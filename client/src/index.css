@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(210, 13%, 18%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 13%, 18%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 13%, 18%);
+  --primary: hsl(204, 67%, 60%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(209, 50%, 53%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(210, 13%, 45%);
+  --accent: hsl(213, 64%, 48%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(354, 70%, 54%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --ring: hsl(204, 67%, 60%);
+  --success: hsl(142, 76%, 36%);
+  --success-foreground: hsl(0, 0%, 100%);
+  --warning: hsl(38, 92%, 50%);
+  --warning-foreground: hsl(0, 0%, 100%);
+  --chart-1: hsl(204, 67%, 60%);
+  --chart-2: hsl(142, 76%, 36%);
+  --chart-3: hsl(38, 92%, 50%);
+  --chart-4: hsl(354, 70%, 54%);
+  --chart-5: hsl(270, 95%, 60%);
+  --sidebar: hsl(210, 40%, 96%);
+  --sidebar-foreground: hsl(210, 13%, 18%);
+  --sidebar-primary: hsl(204, 67%, 60%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(213, 64%, 48%);
+  --sidebar-accent-foreground: hsl(0, 0%, 100%);
+  --sidebar-border: hsl(214, 32%, 91%);
+  --sidebar-ring: hsl(204, 67%, 60%);
+  --font-sans: 'Inter', 'Segoe UI', sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: 'SF Mono', Monaco, monospace;
+  --radius: 0.5rem;
+  --shadow-2xs: 0px 1px 2px 0px hsl(204, 67%, 60%, 0.05);
+  --shadow-xs: 0px 1px 2px 0px hsl(204, 67%, 60%, 0.05);
+  --shadow-sm: 0px 1px 3px 0px hsl(204, 67%, 60%, 0.1), 0px 1px 2px -1px hsl(204, 67%, 60%, 0.1);
+  --shadow: 0px 1px 3px 0px hsl(204, 67%, 60%, 0.1), 0px 1px 2px -1px hsl(204, 67%, 60%, 0.1);
+  --shadow-md: 0px 4px 6px -1px hsl(204, 67%, 60%, 0.1), 0px 2px 4px -2px hsl(204, 67%, 60%, 0.1);
+  --shadow-lg: 0px 10px 15px -3px hsl(204, 67%, 60%, 0.1), 0px 4px 6px -4px hsl(204, 67%, 60%, 0.1);
+  --shadow-xl: 0px 20px 25px -5px hsl(204, 67%, 60%, 0.1), 0px 8px 10px -6px hsl(204, 67%, 60%, 0.1);
+  --shadow-2xl: 0px 25px 50px -12px hsl(204, 67%, 60%, 0.25);
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(200, 6.7%, 91.2%);
+  --card: hsl(228, 9.8%, 10%);
+  --card-foreground: hsl(0, 0%, 85.1%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(200, 6.7%, 91.2%);
+  --primary: hsl(204, 67%, 60%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(195, 15.4%, 94.9%);
+  --secondary-foreground: hsl(210, 13%, 18%);
+  --muted: hsl(0, 0%, 9.4%);
+  --muted-foreground: hsl(210, 3.4%, 46.3%);
+  --accent: hsl(213, 64%, 48%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(354, 70%, 54%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 5.3%, 14.9%);
+  --input: hsl(207, 27.7%, 18.4%);
+  --ring: hsl(204, 67%, 60%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Medical-specific styles */
+.medical-gradient {
+  background: linear-gradient(135deg, hsl(204, 67%, 60%) 0%, hsl(209, 50%, 53%) 100%);
+}
+
+.consultation-card {
+  background: hsla(204, 67%, 60%, 0.05);
+  border-left: 4px solid hsl(204, 67%, 60%);
+}
+
+.stats-card {
+  background: hsl(0, 0%, 100%);
+  border: 1px solid hsl(214, 32%, 91%);
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  border-color: hsl(204, 67%, 60%);
+  box-shadow: 0 8px 32px hsla(204, 67%, 60%, 0.1);
+}
+
+/* Animation classes */
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .8;
+  }
+}
+
+/* Voice recording indicator */
+.recording-indicator {
+  animation: recording-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes recording-pulse {
+  0% {
+    transform: scale(1);
+    background-color: hsl(354, 70%, 54%);
+  }
+  50% {
+    transform: scale(1.1);
+    background-color: hsl(354, 70%, 64%);
+  }
+  100% {
+    transform: scale(1);
+    background-color: hsl(354, 70%, 54%);
+  }
+}
+
+/* Medical data font */
+.medical-data {
+  font-family: var(--font-mono);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+  .hero-text {
+    font-size: 2rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
